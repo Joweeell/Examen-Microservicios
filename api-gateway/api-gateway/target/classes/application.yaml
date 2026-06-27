@@ -1,0 +1,48 @@
+server:
+  port: 8999
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            wiretap: false
+          routes:
+            # 1. Enrutamiento del Microservicio de Usuarios
+            - id: usuarios_route
+              uri: lb://Micro-Usuarios
+              predicates:
+                - Path=/api/v1/usuarios/**
+
+            # 2. Enrutamiento del Microservicio de Productos
+            - id: productos_route
+              uri: lb://Micro-Productos
+              predicates:
+                - Path=/api/v1/productos/**, /api/v2/productos/**
+
+            # 3. Enrutamiento del Microservicio de Inventario
+            - id: inventario_route
+              uri: lb://Micro-Inventario
+              predicates:
+                - Path=/api/v1/inventario/**, /api/v2/inventario/**
+
+            # 4. Enrutamiento del Microservicio de Envíos
+            - id: envios_route
+              uri: lb://Micro-Envios
+              predicates:
+                - Path=/api/v1/envios/**, /api/v2/envios/**
+
+            # 5. Enrutamiento del Microservicio de Ventas
+            - id: ventas_route
+              uri: lb://Micro-Ventas
+              predicates:
+                - Path=/api/v1/ventas/**, /api/v2/ventas/**
+
+# Dirección central para que el Gateway escuche a tu servidor de descubrimiento
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
